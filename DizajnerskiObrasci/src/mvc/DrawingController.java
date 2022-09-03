@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import dialogs.DlgCircle;
 import dialogs.DlgDonut;
+import dialogs.DlgHexagon;
 import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgRectangle;
@@ -17,6 +18,7 @@ import geometry.Point;
 import geometry.Rectangle;
 import geometry.Shape;
 import geometry.SurfaceShape;
+import adapter.HexagonAdapter;
 
 import java.awt.Color;
 
@@ -73,6 +75,23 @@ public class DrawingController {
 			try {				
 				((Rectangle)newShape).setWidth(Integer.parseInt(r.getTxtWidth().getText()));
 				((Rectangle)newShape).setHeigth(Integer.parseInt(r.getTxtHeigth().getText()));
+			} catch (Exception ex) {
+				newShape = null;
+				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} else if (drawingFrame.getTglbtnHexagon().isSelected()) {
+			DlgHexagon h = new DlgHexagon();
+			h.getTxtX().setText(String.valueOf(e.getX()));
+			h.getTxtY().setText(String.valueOf(e.getY()));
+			h.getTxtX().setEnabled(false);
+			h.getTxtY().setEnabled(false);
+			h.setInnerColor(Color.WHITE);
+			h.getBtnColor().setVisible(false);
+			h.setVisible(true);
+			if(!h.isOk()) return;
+			newShape = new HexagonAdapter(new Point(e.getX(), e.getY()), -1, false, drawingFrame.getColorPalete().getColor(), h.getInnerColor());
+			try {
+				((HexagonAdapter)newShape).setRadius(Integer.parseInt(h.getTxtR().getText()));
 			} catch (Exception ex) {
 				newShape = null;
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
@@ -159,6 +178,23 @@ public class DrawingController {
 			try {
 				((Line)selectedShape).setStartPoint(new Point(Integer.parseInt(l.getTxtX1().getText()), Integer.parseInt(l.getTxtY1().getText())));
 				((Line)selectedShape).setEndPoint(new Point(Integer.parseInt(l.getTxtX2().getText()), Integer.parseInt(l.getTxtY2().getText())));
+				drawingModel.getShapes().set(selectedIndex, selectedShape);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} else if(selectedShape instanceof HexagonAdapter) {
+			DlgHexagon h = new DlgHexagon();
+			h.getTxtX().setText(String.valueOf(((HexagonAdapter)selectedShape).getCenter().getX()));
+			h.getTxtY().setText(String.valueOf(((HexagonAdapter)selectedShape).getCenter().getY()));
+			h.getTxtR().setText(String.valueOf(((HexagonAdapter)selectedShape).getRadius()));
+			h.setColor(((HexagonAdapter)selectedShape).getColor());
+			h.setInnerColor(((HexagonAdapter)selectedShape).getInnerColor());
+			h.setVisible(true);
+			if(!h.isOk()) return;
+			selectedShape = new HexagonAdapter(null,-1, true, h.getColor(), h.getInnerColor());
+			try {
+				((HexagonAdapter)selectedShape).setCenter(new Point(Integer.parseInt(h.getTxtX().getText()),Integer.parseInt(h.getTxtY().getText())));
+				((HexagonAdapter)selectedShape).setRadius(Integer.parseInt(h.getTxtR().getText()));
 				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);

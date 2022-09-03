@@ -34,6 +34,7 @@ public class DrawingFrame extends JFrame {
 	private JToggleButton tglbtnLine = new JToggleButton("Line");		
 	private JToggleButton tglbtnSelect = new JToggleButton("Select");
 	private JToggleButton tglbtnFill = new JToggleButton("Fill");
+	private JToggleButton tglbtnHexagon = new JToggleButton("Hexagon");
 	private JColorChooser colorPalete = new JColorChooser(Color.BLACK);
 	private JButton btnModify = new JButton("Modify");	
 	private JButton btnDelete = new JButton("Delete");
@@ -79,6 +80,9 @@ public class DrawingFrame extends JFrame {
 		tglButtons.add(tglbtnDonut);
 		tglButtons.add(tglbtnLine);
 		tglButtons.add(tglbtnFill);
+		tglButtons.add(tglbtnHexagon);
+		
+		
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -87,20 +91,21 @@ public class DrawingFrame extends JFrame {
 					.addComponent(colorPalete, GroupLayout.PREFERRED_SIZE, 438, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(tglbtnSelect, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(btnModify, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(tglbtnSelect, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-							.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
-						.addComponent(tglbtnFill, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE))
+							.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+							.addComponent(tglbtnFill, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
+						.addComponent(tglbtnHexagon, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE))
 					.addGap(518))
-				.addComponent(drawingView, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1184, Short.MAX_VALUE)
+				.addComponent(drawingView, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1174, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -109,13 +114,15 @@ public class DrawingFrame extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(tglbtnPoint)
-								.addComponent(tglbtnSelect))
+								.addComponent(tglbtnHexagon))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(tglbtnLine)
-								.addComponent(tglbtnFill))
+								.addComponent(tglbtnSelect))
 							.addGap(4)
-							.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(tglbtnFill))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(tglbtnCircle)
@@ -167,6 +174,10 @@ public class DrawingFrame extends JFrame {
 	
 	public JToggleButton getTglbtnFill() {
 		return tglbtnFill;
+	}
+	
+	public JToggleButton getTglbtnHexagon() {
+		return tglbtnHexagon;
 	}
 
 	public JColorChooser getColorPalete() {
