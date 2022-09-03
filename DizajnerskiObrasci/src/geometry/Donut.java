@@ -2,9 +2,12 @@ package geometry;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.*;
 
 public class Donut extends Circle{
 	private int innerRadius;
+	private Area circle;
 	
 	public Donut() {
 		
@@ -44,16 +47,29 @@ public class Donut extends Circle{
 	@Override
 	public void fill(Graphics g) {
 		g.setColor(this.getInnerColor());
-		super.fill(g);
-		g.setColor(Color.WHITE);
-		g.fillOval(this.getCenter().getX()-this.innerRadius, this.getCenter().getY()-this.innerRadius, this.innerRadius*2, this.innerRadius*2);
+        ((Graphics2D)g).fill(circle);
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		super.draw(g);
-		g.setColor(getColor());
-		g.drawOval(this.getCenter().getX()-this.innerRadius, this.getCenter().getY()-this.innerRadius, this.innerRadius*2, this.innerRadius*2);
+		Ellipse2D.Double ellipse1 = new Ellipse2D.Double(
+				this.getCenter().getX()-this.getRadius(),this.getCenter().getY()-this.getRadius(),this.getRadius()*2,this.getRadius()*2); 
+        Ellipse2D.Double ellipse2 = new Ellipse2D.Double(
+        		this.getCenter().getX()-this.innerRadius,this.getCenter().getY()-this.innerRadius,this.innerRadius*2,this.innerRadius*2);
+        circle = new Area(ellipse1);
+        circle.subtract(new Area(ellipse2));
+        g.setColor(this.getColor());
+        ((Graphics2D)g).draw(circle);
+        fill(g);       
+        
+        if (isSelected()) {
+			g.setColor(Color.BLUE);
+			g.drawRect(this.getCenter().getX()-3, this.getCenter().getY()-3, 6, 6);
+			g.drawRect(this.getCenter().getX()-this.getRadius()-3, this.getCenter().getY()-3, 6, 6);
+			g.drawRect(this.getCenter().getX()+this.getRadius()-3, this.getCenter().getY()-3, 6, 6);
+			g.drawRect(this.getCenter().getX()-3, this.getCenter().getY()-this.getRadius()-3, 6, 6);
+			g.drawRect(this.getCenter().getX()-3, this.getCenter().getY()+this.getRadius()-3, 6, 6);
+		}
 	}
 
 	public double area() {
