@@ -66,11 +66,11 @@ public class DrawingController {
 				}			
 			}
 		} else if (drawingFrame.getTglbtnPoint().isSelected()) {
-			newShape = new Point(e.getX(), e.getY(), false, drawingFrame.getColorPalete().getColor());
+			newShape = new Point(e.getX(), e.getY(), false, drawingFrame.getColor());
 		} else if (drawingFrame.getTglbtnLine().isSelected()) {
-			if(startPoint == null) startPoint = new Point(e.getX(), e.getY(), false, drawingFrame.getColorPalete().getColor());
+			if(startPoint == null) startPoint = new Point(e.getX(), e.getY(), false, drawingFrame.getColor());
 			else {
-				newShape = new Line(startPoint, new Point(e.getX(), e.getY()), false, drawingFrame.getColorPalete().getColor());
+				newShape = new Line(startPoint, new Point(e.getX(), e.getY()), false, drawingFrame.getColor());
 				startPoint = null;
 			}
 		} else if (drawingFrame.getTglbtnRectangle().isSelected()) {
@@ -79,11 +79,11 @@ public class DrawingController {
 			r.getTxtYCoordinate().setText(String.valueOf(e.getY()));
 			r.getTxtXCoordinate().setEnabled(false);
 			r.getTxtYCoordinate().setEnabled(false);
-			r.setInnerColor(Color.WHITE);
 			r.getBtnColor().setVisible(false);
+			r.getBtnInnerColor().setVisible(false);
 			r.setVisible(true);
 			if(!r.isOk()) return;
-			newShape = new Rectangle(new Point(e.getX(),e.getY()), -1, -1, false, drawingFrame.getColorPalete().getColor(), r.getInnerColor());
+			newShape = new Rectangle(new Point(e.getX(),e.getY()), -1, -1, false, drawingFrame.getColor(), drawingFrame.getInnerColor());
 			try {				
 				((Rectangle)newShape).setWidth(Integer.parseInt(r.getTxtWidth().getText()));
 				((Rectangle)newShape).setHeigth(Integer.parseInt(r.getTxtHeigth().getText()));
@@ -97,11 +97,11 @@ public class DrawingController {
 			h.getTxtY().setText(String.valueOf(e.getY()));
 			h.getTxtX().setEnabled(false);
 			h.getTxtY().setEnabled(false);
-			h.setInnerColor(Color.WHITE);
 			h.getBtnColor().setVisible(false);
+			h.getBtnInnerColor().setVisible(false);
 			h.setVisible(true);
 			if(!h.isOk()) return;
-			newShape = new HexagonAdapter(new Point(e.getX(), e.getY()), -1, false, drawingFrame.getColorPalete().getColor(), h.getInnerColor());
+			newShape = new HexagonAdapter(new Point(e.getX(), e.getY()), -1, false, drawingFrame.getColor(), drawingFrame.getInnerColor());
 			try {
 				((HexagonAdapter)newShape).setRadius(Integer.parseInt(h.getTxtR().getText()));
 			} catch (Exception ex) {
@@ -114,11 +114,11 @@ public class DrawingController {
 			c.getTxtY1().setText(String.valueOf(e.getY()));
 			c.getTxtX1().setEnabled(false);
 			c.getTxtY1().setEnabled(false);
-			c.setInnerColor(Color.WHITE);
 			c.getBtnColor().setVisible(false);
+			c.getBtnInnerColor().setVisible(false);
 			c.setVisible(true);
 			if(!c.isOk()) return;
-			newShape = new Circle(new Point(e.getX(),e.getY()), -1, false, drawingFrame.getColorPalete().getColor(), c.getInnerColor());
+			newShape = new Circle(new Point(e.getX(),e.getY()), -1, false, drawingFrame.getColor(), drawingFrame.getInnerColor());
 			try {
 				((Circle)newShape).setRadius(Integer.parseInt(c.getTxtRadius().getText()));
 			} catch (Exception ex) {
@@ -131,11 +131,11 @@ public class DrawingController {
 			d.getTxtY1().setText(String.valueOf(e.getY()));
 			d.getTxtX1().setEnabled(false);
 			d.getTxtY1().setEnabled(false);
-			d.setInnerColor(Color.WHITE);
 			d.getBtnColor().setVisible(false);
+			d.getBtnInnerColor().setVisible(false);
 			d.setVisible(true);
 			if(!d.isOk()) return;
-			newShape = new Donut(new Point(e.getX(),e.getY()), -1, -1, false, drawingFrame.getColorPalete().getColor(), d.getInnerColor());
+			newShape = new Donut(new Point(e.getX(),e.getY()), -1, -1, false, drawingFrame.getColor(), drawingFrame.getInnerColor());
 			try {
 				((Donut)newShape).setRadius(Integer.parseInt(d.getTxtOuterRadius().getText()));
 				((Donut)newShape).setInnerRadius(Integer.parseInt(d.getTxtInnerRadius().getText()));
@@ -150,7 +150,7 @@ public class DrawingController {
 				Shape shape = it.next();
 				if(shape.contains(e.getX(), e.getY()) && shape instanceof SurfaceShape) fillShape = (SurfaceShape) shape;
 			}
-			if(fillShape != null) fillShape.setInnerColor(drawingFrame.getColorPalete().getColor());
+			if(fillShape != null) fillShape.setInnerColor(drawingFrame.getInnerColor());
 		}
 		if (newShape != null) drawingModel.add(newShape);
 		drawingFrame.repaint();

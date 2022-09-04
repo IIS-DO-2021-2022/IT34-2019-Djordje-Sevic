@@ -28,6 +28,7 @@ public class DlgDonut extends JDialog {
 	private Color color;
 	private Color innerColor;
 	private JButton btnColor;
+	private JButton btnInnerColor;
 
 	/**
 	 * Launch the application.
@@ -73,7 +74,7 @@ public class DlgDonut extends JDialog {
 			}
 		});
 		
-		JButton btnInnerColor = new JButton("Inner color");
+		btnInnerColor = new JButton("Inner color");
 		btnInnerColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				innerColor = JColorChooser.showDialog(contentPanel, "Choose color",innerColor);
@@ -191,6 +192,10 @@ public class DlgDonut extends JDialog {
 
 	public JButton getBtnColor() {
 		return btnColor;
+	}
+	
+	public JButton getBtnInnerColor() {
+		return btnInnerColor;
 	}
 
 	public JTextField getTxtX1() {

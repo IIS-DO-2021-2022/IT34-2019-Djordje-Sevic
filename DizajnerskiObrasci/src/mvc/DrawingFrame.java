@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
 
 public class DrawingFrame extends JFrame {
 	
@@ -35,10 +36,11 @@ public class DrawingFrame extends JFrame {
 	private JToggleButton tglbtnSelect = new JToggleButton("Select");
 	private JToggleButton tglbtnFill = new JToggleButton("Fill");
 	private JToggleButton tglbtnHexagon = new JToggleButton("Hexagon");
-	private JColorChooser colorPalete = new JColorChooser(Color.BLACK);
 	private JButton btnModify = new JButton("Modify");	
 	private JButton btnDelete = new JButton("Delete");
 	private JPanel contentPane;
+	private Color color = Color.BLACK;
+	private Color innerColor = Color.WHITE;
 	
 	public DrawingFrame() {
 		
@@ -70,8 +72,8 @@ public class DrawingFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		colorPalete.setPreviewPanel(new JPanel());
-		colorPalete.setChooserPanels(new AbstractColorChooserPanel[] {colorPalete.getChooserPanels()[0]});
+		//colorPalete.setPreviewPanel(new JPanel());
+		//colorPalete.setChooserPanels(new AbstractColorChooserPanel[] {colorPalete.getChooserPanels()[0]});
 		
 		tglButtons.add(tglbtnSelect);
 		tglButtons.add(tglbtnPoint);
@@ -82,20 +84,54 @@ public class DrawingFrame extends JFrame {
 		tglButtons.add(tglbtnFill);
 		tglButtons.add(tglbtnHexagon);
 		
+		JButton btnBorderColor = new JButton("");
+		btnBorderColor.setBackground(color);
+		btnBorderColor.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	color = JColorChooser.showDialog(drawingView, "Choose color", color);
+		    	btnBorderColor.setBackground(color);
+		    }
+		});
+		
+		JButton btnInnerColor = new JButton("");
+		btnInnerColor.setBackground(innerColor);
+		btnInnerColor.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	innerColor = JColorChooser.showDialog(drawingView, "Choose color", innerColor);
+		    	btnInnerColor.setBackground(innerColor);
+		    }
+		});
+		
+		JLabel lblBorderColor = new JLabel("Active Color:");
+		lblBorderColor.setForeground(Color.WHITE);
+		
+		JLabel lblInnerColor = new JLabel("Active Inner Color:");
+		lblInnerColor.setForeground(Color.WHITE);
 		
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(colorPalete, GroupLayout.PREFERRED_SIZE, 438, GroupLayout.PREFERRED_SIZE)
+					.addGap(236)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(lblInnerColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
+						.addComponent(btnBorderColor, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnInnerColor, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
@@ -111,27 +147,30 @@ public class DrawingFrame extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(tglbtnPoint)
-								.addComponent(tglbtnHexagon))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(tglbtnLine)
-								.addComponent(tglbtnSelect))
-							.addGap(4)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(tglbtnFill))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(tglbtnCircle)
-								.addComponent(btnModify))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(tglbtnDonut)
-								.addComponent(btnDelete)))
-						.addComponent(colorPalete, GroupLayout.PREFERRED_SIZE, 137, Short.MAX_VALUE))
+						.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(tglbtnHexagon, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnBorderColor, GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblInnerColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(tglbtnSelect, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnInnerColor, GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)))
+					.addGap(4)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(tglbtnFill))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(tglbtnCircle)
+						.addComponent(btnModify))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(tglbtnDonut)
+						.addComponent(btnDelete))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(drawingView, GroupLayout.PREFERRED_SIZE, 596, GroupLayout.PREFERRED_SIZE)
 					.addGap(22))
@@ -180,7 +219,23 @@ public class DrawingFrame extends JFrame {
 		return tglbtnHexagon;
 	}
 
-	public JColorChooser getColorPalete() {
-		return colorPalete;
+	//public JColorChooser getColorPalete() {
+	//	return colorPalete;
+	//}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public Color getInnerColor() {
+		return innerColor;
+	}
+
+	public void setInnerColor(Color innerColor) {
+		this.innerColor = innerColor;
 	}
 }
