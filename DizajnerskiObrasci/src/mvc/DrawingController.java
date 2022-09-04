@@ -68,11 +68,11 @@ public class DrawingController {
 			if(selectedShape == null) {
 				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, 0);
 				selectedShapes.clear();
-				count = 0;
+				this.count = 0;
 			} else if(selectedShapes.size() > 0) {
 				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, selectedShapes.size());
-				count = selectedShapes.size();
-				for (int j = 0;j < count; j++) {
+				this.count = selectedShapes.size();
+				for (int j = 0;j < this.count; j++) {
 					selectedShapes.get(j).setSelected(true);
 				}			
 			}
@@ -287,8 +287,13 @@ public class DrawingController {
 			return;
 		}
 		if(JOptionPane.showConfirmDialog(drawingFrame, "Are you sure?") != 0) return;
-		drawingModel.getShapes().remove(selectedShape);
+		for(int i = 0; i < selectedShapes.size(); i++) {
+			drawingModel.getShapes().remove(selectedShapes.get(i));
+		}
+		propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, 0);
+		selectedShapes.clear();
 		selectedShape = null;
+		this.count = 0;
 		drawingFrame.repaint();
 	}
 	
