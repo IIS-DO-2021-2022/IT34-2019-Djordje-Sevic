@@ -89,4 +89,15 @@ public class Point extends Shape {
 	public String toString() {
 		return "(" + x + "," + y + ")";
 	}
+
+	@Override
+	public Point clone() {
+		Point point = new Point();
+		point.x = this.x;
+		point.y = this.y;
+		point.setSelected(this.isSelected());
+		point.setColor(this.getColor());
+		
+		return point;
+	}
 }

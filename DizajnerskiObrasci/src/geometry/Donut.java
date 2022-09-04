@@ -94,4 +94,12 @@ public class Donut extends Circle{
 	public String toString() {
 		return super.toString() + ", inner radius=" + innerRadius;
 	}
+	
+	@Override
+	public Donut clone() {
+		Circle d = super.clone();
+		((Donut)d).circle = this.circle;
+		((Donut)d).innerRadius = this.innerRadius;
+		return (Donut)d;
+	}
 }

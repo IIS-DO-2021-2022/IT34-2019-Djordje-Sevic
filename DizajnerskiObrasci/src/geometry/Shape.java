@@ -2,7 +2,7 @@ package geometry;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public abstract class Shape implements Comparable, Moveable{
+public abstract class Shape implements Comparable, Moveable, Cloneable{
 	private boolean selected;
 	private Color color;
 	
@@ -33,5 +33,7 @@ public abstract class Shape implements Comparable, Moveable{
 	}
 	public void setColor(Color color) {
 		this.color = color;
-	}	
+	}
+	
+	public abstract Shape clone();
 }

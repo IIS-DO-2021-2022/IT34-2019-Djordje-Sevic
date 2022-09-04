@@ -92,4 +92,14 @@ public class Line extends Shape {
 	public String toString() {
 		return startPoint + "-->" + endPoint;
 	}
+
+	@Override
+	public Line clone() {
+		Line line = new Line();
+		line.startPoint = this.startPoint.clone();
+		line.endPoint = this.endPoint.clone();
+		line.setColor(this.getColor());
+		line.setSelected(this.isSelected());
+		return line;
+	}
 }

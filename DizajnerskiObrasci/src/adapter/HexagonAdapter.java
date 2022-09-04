@@ -3,6 +3,7 @@ package adapter;
 import java.awt.Graphics;
 
 import geometry.Point;
+import geometry.Shape;
 import geometry.SurfaceShape;
 import hexagon.Hexagon;
 import java.awt.Color;
@@ -115,5 +116,18 @@ public class HexagonAdapter extends SurfaceShape {
 	@Override
 	public String toString() {
 		return "Center=" + this.center + ", radius=" + this.hexagon.getR();
+	}
+
+	@Override
+	public HexagonAdapter clone() {
+		HexagonAdapter hex = new HexagonAdapter();
+		hex.center = this.center.clone();
+		hex.hexagon.setX(this.hexagon.getX());
+		hex.hexagon.setY(this.hexagon.getY());
+		hex.hexagon.setR(this.hexagon.getR());
+		hex.setColor(this.getColor());
+		hex.setInnerColor(this.getInnerColor());
+		hex.setSelected(this.isSelected());
+		return hex;
 	}
 }

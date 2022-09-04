@@ -106,5 +106,17 @@ public class Rectangle extends SurfaceShape{
 	@Override
 	public String toString() {
 		return "Upper Left Point=" + upperLeftPoint + ", width=" + width + ", height=" + heigth;
+	}
+
+	@Override
+	public Rectangle clone() {
+		Rectangle rect = new Rectangle();
+		rect.upperLeftPoint = this.upperLeftPoint.clone();
+		rect.heigth = this.heigth;
+		rect.width = this.width;
+		rect.setColor(this.getColor());
+		rect.setInnerColor(this.getInnerColor());
+		rect.setSelected(this.isSelected());		
+		return rect;
 	}			
 }

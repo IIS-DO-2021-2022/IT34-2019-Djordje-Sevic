@@ -98,4 +98,15 @@ public class Circle extends SurfaceShape {
 	public String toString() {
 		return "Center=" + center + ", radius=" + radius;
 	}
+
+	@Override
+	public Circle clone() {
+		Circle c = new Circle();
+		c.center = this.center.clone();
+		c.radius = this.radius;
+		c.setColor(this.getColor());
+		c.setInnerColor(this.getInnerColor());
+		c.setSelected(this.isSelected());
+		return c;
+	}
 }
