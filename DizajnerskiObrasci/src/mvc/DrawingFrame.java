@@ -19,9 +19,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+
 import javax.swing.JLabel;
 
-public class DrawingFrame extends JFrame {
+public class DrawingFrame extends JFrame implements PropertyChangeListener {
 	
 	private DrawingView drawingView = new DrawingView();
 	
@@ -55,13 +58,15 @@ public class DrawingFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				drawingController.delete();
 			}
-		});	
+		});
+		btnDelete.setEnabled(false);
 		
 		btnModify.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				drawingController.modify();
 			}
 		});	
+		btnModify.setEnabled(false);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1200, 800);
@@ -178,6 +183,23 @@ public class DrawingFrame extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 		setVisible(true);
 	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(evt.getPropertyName().equals("numberOfSelectedShapes")) {
+			int count = (int)evt.getNewValue();
+			if(count == 0) {
+				btnModify.setEnabled(false);
+				btnDelete.setEnabled(false);
+			} else if(count == 1){
+				btnDelete.setEnabled(true);
+				btnModify.setEnabled(true);
+			} else if(count > 1){
+				btnModify.setEnabled(false);
+			}
+		}
+		
+	}
 
 	public DrawingView getDrawingView() {
 		return drawingView;
@@ -218,10 +240,6 @@ public class DrawingFrame extends JFrame {
 	public JToggleButton getTglbtnHexagon() {
 		return tglbtnHexagon;
 	}
-
-	//public JColorChooser getColorPalete() {
-	//	return colorPalete;
-	//}
 
 	public Color getColor() {
 		return color;

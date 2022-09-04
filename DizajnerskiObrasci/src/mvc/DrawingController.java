@@ -21,6 +21,8 @@ import geometry.Rectangle;
 import geometry.Shape;
 import geometry.SurfaceShape;
 import adapter.HexagonAdapter;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import java.awt.Color;
 
@@ -34,11 +36,14 @@ public class DrawingController {
 	private List<Shape> selectedShapes;
 	private int selectedIndex;
 	private Point startPoint;
+	private PropertyChangeSupport propertyChangeSupport;
+	private int count = 0;
 	
 	public DrawingController(DrawingModel drawingModel, DrawingFrame drawingFrame) {
 		this.drawingModel = drawingModel;
 		this.drawingFrame = drawingFrame;
 		this.selectedShapes = new ArrayList<Shape>();
+		propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 	
 	public void mouseClicked(MouseEvent e) {
@@ -52,16 +57,22 @@ public class DrawingController {
 				shape.setSelected(false);
 				i++;
 				if(shape.contains(e.getX(), e.getY())) {
-					if(selectedShape != null) selectedShapes.remove(selectedShape);
+					if(selectedShape != null) {
+						selectedShapes.remove(selectedShape);
+					}
 					selectedShape = shape;
-					selectedShapes.add(shape);
+					selectedShapes.add(shape);					
 					selectedIndex = i;
 				}
 			}
 			if(selectedShape == null) {
+				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, 0);
 				selectedShapes.clear();
+				count = 0;
 			} else if(selectedShapes.size() > 0) {
-				for (int j = 0;j < selectedShapes.size(); j++) {
+				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, selectedShapes.size());
+				count = selectedShapes.size();
+				for (int j = 0;j < count; j++) {
 					selectedShapes.get(j).setSelected(true);
 				}			
 			}
@@ -279,6 +290,14 @@ public class DrawingController {
 		drawingModel.getShapes().remove(selectedShape);
 		selectedShape = null;
 		drawingFrame.repaint();
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+		propertyChangeSupport.addPropertyChangeListener(propertyChangeListener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+		propertyChangeSupport.removePropertyChangeListener(propertyChangeListener);
 	}
 
 }

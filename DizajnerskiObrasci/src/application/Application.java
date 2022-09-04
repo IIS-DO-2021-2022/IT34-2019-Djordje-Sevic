@@ -13,6 +13,7 @@ public class Application {
 		drawFrame.getDrawingView().setDrawingModel(drawModel);
 		DrawingController drawController = new DrawingController(drawModel, drawFrame);
 		drawFrame.setDrawingController(drawController);
+		drawController.addPropertyChangeListener(drawFrame);
 	}
 
 }
