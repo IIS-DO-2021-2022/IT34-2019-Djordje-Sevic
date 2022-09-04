@@ -1,7 +1,9 @@
 package mvc;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -29,12 +31,14 @@ public class DrawingController {
 	
 	private Iterator<Shape> it;
 	private Shape selectedShape;
+	private List<Shape> selectedShapes;
 	private int selectedIndex;
 	private Point startPoint;
 	
 	public DrawingController(DrawingModel drawingModel, DrawingFrame drawingFrame) {
 		this.drawingModel = drawingModel;
 		this.drawingFrame = drawingFrame;
+		this.selectedShapes = new ArrayList<Shape>();
 	}
 	
 	public void mouseClicked(MouseEvent e) {
@@ -48,11 +52,19 @@ public class DrawingController {
 				shape.setSelected(false);
 				i++;
 				if(shape.contains(e.getX(), e.getY())) {
+					if(selectedShape != null) selectedShapes.remove(selectedShape);
 					selectedShape = shape;
+					selectedShapes.add(shape);
 					selectedIndex = i;
 				}
 			}
-			if(selectedShape != null) selectedShape.setSelected(true);			
+			if(selectedShape == null) {
+				selectedShapes.clear();
+			} else if(selectedShapes.size() > 0) {
+				for (int j = 0;j < selectedShapes.size(); j++) {
+					selectedShapes.get(j).setSelected(true);
+				}			
+			}
 		} else if (drawingFrame.getTglbtnPoint().isSelected()) {
 			newShape = new Point(e.getX(), e.getY(), false, drawingFrame.getColorPalete().getColor());
 		} else if (drawingFrame.getTglbtnLine().isSelected()) {
