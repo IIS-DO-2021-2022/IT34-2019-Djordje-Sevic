@@ -2,6 +2,7 @@ package mvc;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -297,6 +298,74 @@ public class DrawingController {
 		drawingFrame.repaint();
 	}
 	
+	public void bringToBack() {
+		if(selectedShape == null) {
+			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(selectedIndex == 0) {
+			JOptionPane.showMessageDialog(drawingFrame, "It is already on bottom!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		for(int i = selectedIndex; i > 0; i--) {
+			Collections.swap(drawingModel.getShapes(), i, i - 1);
+		}
+		selectedIndex=0;
+		drawingFrame.repaint();
+	}
+
+	public void ToBack() {
+		if(selectedShape == null) {
+			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(selectedIndex == 0) {
+			JOptionPane.showMessageDialog(drawingFrame, "It is already on bottom!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		Collections.swap(drawingModel.getShapes(), selectedIndex, selectedIndex - 1);
+		selectedIndex--;
+		drawingFrame.repaint();
+	}
+
+	public void BringToFront() {
+		if(selectedShape == null) {
+			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(selectedIndex == drawingModel.getShapes().size() - 1) {
+			JOptionPane.showMessageDialog(drawingFrame, "It is already on top!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		for(int i = selectedIndex; i < drawingModel.getShapes().size() - 1; i++) {
+			Collections.swap(drawingModel.getShapes(), i, i + 1);
+		}
+		selectedIndex = drawingModel.getShapes().size() - 1;
+		drawingFrame.repaint();
+	}
+
+	public void ToFront() {
+		if(selectedShape == null) {
+			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(selectedIndex == drawingModel.getShapes().size() - 1) {
+			JOptionPane.showMessageDialog(drawingFrame, "It is already on top!", "Warrning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		Collections.swap(drawingModel.getShapes(), selectedIndex, selectedIndex + 1);
+		selectedIndex++;
+		drawingFrame.repaint();
+	}
+	
 	public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
 		propertyChangeSupport.addPropertyChangeListener(propertyChangeListener);
 	}
@@ -304,5 +373,4 @@ public class DrawingController {
 	public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
 		propertyChangeSupport.removePropertyChangeListener(propertyChangeListener);
 	}
-
 }
