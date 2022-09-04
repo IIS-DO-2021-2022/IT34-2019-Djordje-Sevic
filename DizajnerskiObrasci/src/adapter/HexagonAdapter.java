@@ -63,11 +63,6 @@ public class HexagonAdapter extends SurfaceShape {
 	}
 	
 	@Override
-	public String toString() {
-		return "x=" + this.hexagon.getX() + ", y=" + this.hexagon.getY() + ", r=" + this.hexagon.getR();
-	}
-	
-	@Override
 	public Color getColor() {
 		return this.hexagon.getBorderColor();
 	}
@@ -115,5 +110,10 @@ public class HexagonAdapter extends SurfaceShape {
 	public void setRadius(int radius) throws Exception {
 		if (radius <= 0) throw new Exception();
 		this.hexagon.setR(radius);
+	}
+	
+	@Override
+	public String toString() {
+		return "Center=" + this.center + ", radius=" + this.hexagon.getR();
 	}
 }
