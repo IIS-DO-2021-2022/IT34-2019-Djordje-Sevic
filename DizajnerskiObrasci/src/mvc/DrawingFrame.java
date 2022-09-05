@@ -50,6 +50,8 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 	private JButton btnBringToBack = new JButton("Bring To Back");
 	private JButton btnBorderColor = new JButton("");
 	private JButton btnInnerColor = new JButton("");
+	private JButton btnUndo = new JButton("Undo");
+	private JButton btnRedo = new JButton("Redo");
 	
 	public DrawingFrame() {		
 		
@@ -102,8 +104,22 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 		});
 		btnToFront.setEnabled(false);
 		
+		btnUndo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				drawingController.Undo();
+			}
+		});
+		btnUndo.setEnabled(false);
+		
+		btnRedo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				drawingController.Redo();
+			}
+		});
+		btnRedo.setEnabled(false);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1200, 800);
+		setBounds(0, 0, 1200, 800);
 		setResizable(false);
 		setTitle("IT 34-2019 Sevic Djordje");
 		contentPane = new JPanel();
@@ -151,7 +167,10 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(236)
+					.addComponent(btnUndo, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(btnRedo, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
 						.addComponent(lblInnerColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
@@ -161,13 +180,13 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 						.addComponent(btnInnerColor, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
+						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(tglbtnSelect, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -175,22 +194,25 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 								.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
 								.addComponent(tglbtnFill, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
 							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnBringToBack, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnToBack, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnBringToFront, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnBringToBack, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+								.addComponent(btnToBack, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnBringToFront, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(tglbtnHexagon, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(btnToFront, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)))
-					.addGap(407))
-				.addComponent(drawingView, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1174, Short.MAX_VALUE)
+							.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+					.addGap(372))
+				.addComponent(drawingView, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1274, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+							.addComponent(btnUndo)
+							.addComponent(btnRedo))
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 							.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
@@ -253,6 +275,12 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 				btnBringToFront.setEnabled(false);
 				btnToFront.setEnabled(false);
 			}
+		} else if(evt.getPropertyName().equals("undoEnabled")) {
+			int size = (int)evt.getNewValue();
+			btnUndo.setEnabled(size == 0 ? false : true);
+		} else if(evt.getPropertyName().equals("redoEnabled")) {
+			int size = (int)evt.getNewValue();
+			btnRedo.setEnabled(size == 0 ? false : true);
 		}
 		
 	}

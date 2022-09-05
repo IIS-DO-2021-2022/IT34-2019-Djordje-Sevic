@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
@@ -22,6 +23,8 @@ import geometry.Rectangle;
 import geometry.Shape;
 import geometry.SurfaceShape;
 import adapter.HexagonAdapter;
+import command.*;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -39,6 +42,10 @@ public class DrawingController {
 	private Point startPoint;
 	private PropertyChangeSupport propertyChangeSupport;
 	private int count = 0;
+	private Stack<Command> redoStack = new Stack<Command>();
+	private Stack<Command> undoStack = new Stack<Command>();
+	private int undoSize = 0;
+	private int redoSize = 0;
 	
 	public DrawingController(DrawingModel drawingModel, DrawingFrame drawingFrame) {
 		this.drawingModel = drawingModel;
@@ -50,11 +57,17 @@ public class DrawingController {
 	public void mouseClicked(MouseEvent e) {
 		Shape newShape = null;		
 		if(drawingFrame.getTglbtnSelect().isSelected()) {
+			if(selectedShape != null) {
+				if(selectedShape.contains(e.getX(), e.getY())) {
+					return;
+				}
+			}
 			selectedShape = null;
 			it = drawingModel.getShapes().iterator();
 			int i = -1;
 			while(it.hasNext()) {
 				Shape shape = it.next();
+				
 				shape.setSelected(false);
 				i++;
 				if(shape.contains(e.getX(), e.getY())) {
@@ -66,16 +79,29 @@ public class DrawingController {
 					selectedIndex = i;
 				}
 			}
-			if(selectedShape == null) {
-				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, 0);
-				selectedShapes.clear();
-				this.count = 0;
-			} else if(selectedShapes.size() > 0) {
-				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, selectedShapes.size());
-				this.count = selectedShapes.size();
-				for (int j = 0;j < this.count; j++) {
+			if(selectedShape == null) {			
+				count = selectedShapes.size();
+				for (int j = 0;j < count; j++) {
+					UnSelectShapeCommand unSelect = new UnSelectShapeCommand(selectedShapes.get(selectedShapes.size()-1), selectedShapes);
+					unSelect.execute();
+					undoSize = undoStack.size();
+					propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+					undoStack.push(unSelect);
+				}
+				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", count, 0);
+				count = 0;
+			} else {
+				propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", count, selectedShapes.size());
+				count = selectedShapes.size();
+				for (int j = 0;j < count - 1; j++) {
 					selectedShapes.get(j).setSelected(true);
-				}			
+				}
+				selectedShapes.remove(count-1);
+				SelectShapeCommand select = new SelectShapeCommand(selectedShape, selectedShapes);
+				select.execute();
+				undoSize = undoStack.size();
+				propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+				undoStack.push(select);
 			}
 		} else if (drawingFrame.getTglbtnPoint().isSelected()) {
 			newShape = new Point(e.getX(), e.getY(), false, drawingFrame.getColor());
@@ -164,7 +190,17 @@ public class DrawingController {
 			}
 			if(fillShape != null) fillShape.setInnerColor(drawingFrame.getInnerColor());
 		}
-		if (newShape != null) drawingModel.add(newShape);
+		if (newShape != null) {
+			AddShapeCommand add = new AddShapeCommand(newShape, drawingModel);
+			add.execute();
+			undoSize = undoStack.size();
+			propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+			undoStack.push(add);
+		}
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
 		drawingFrame.repaint();
 	}
 	
@@ -185,7 +221,6 @@ public class DrawingController {
 			try {
 				((Point)selectedShape).setX(Integer.parseInt(p.getTxtX1().getText()));
 				((Point)selectedShape).setY(Integer.parseInt(p.getTxtY1().getText()));
-				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
 			}					
@@ -202,7 +237,6 @@ public class DrawingController {
 			try {
 				((Line)selectedShape).setStartPoint(new Point(Integer.parseInt(l.getTxtX1().getText()), Integer.parseInt(l.getTxtY1().getText())));
 				((Line)selectedShape).setEndPoint(new Point(Integer.parseInt(l.getTxtX2().getText()), Integer.parseInt(l.getTxtY2().getText())));
-				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -219,7 +253,6 @@ public class DrawingController {
 			try {
 				((HexagonAdapter)selectedShape).setCenter(new Point(Integer.parseInt(h.getTxtX().getText()),Integer.parseInt(h.getTxtY().getText())));
 				((HexagonAdapter)selectedShape).setRadius(Integer.parseInt(h.getTxtR().getText()));
-				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -238,7 +271,6 @@ public class DrawingController {
 				((Rectangle)selectedShape).setUpperLeftPoint(new Point(Integer.parseInt(r.getTxtXCoordinate().getText()), Integer.parseInt(r.getTxtYCoordinate().getText())));
 				((Rectangle)selectedShape).setWidth(Integer.parseInt(r.getTxtWidth().getText()));
 				((Rectangle)selectedShape).setHeigth(Integer.parseInt(r.getTxtHeigth().getText()));
-				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -257,7 +289,6 @@ public class DrawingController {
 				((Donut)selectedShape).setCenter(new Point(Integer.parseInt(d.getTxtX1().getText()), Integer.parseInt(d.getTxtY1().getText())));
 				((Donut)selectedShape).setRadius(Integer.parseInt(d.getTxtOuterRadius().getText()));
 				((Donut)selectedShape).setInnerRadius(Integer.parseInt(d.getTxtInnerRadius().getText()));
-				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
 			}				
@@ -274,11 +305,20 @@ public class DrawingController {
 			try {
 				((Circle)selectedShape).setCenter(new Point(Integer.parseInt(c.getTxtX1().getText()), Integer.parseInt(c.getTxtY1().getText())));
 				((Circle)selectedShape).setRadius(Integer.parseInt(c.getTxtRadius().getText()));
-				drawingModel.getShapes().set(selectedIndex, selectedShape);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(drawingFrame, "Wrong input data", "Error", JOptionPane.ERROR_MESSAGE);
 			}					
 		}
+		Shape old = drawingModel.getShapes().get(selectedIndex);
+		UpdateShapeCommand update = new UpdateShapeCommand(old, selectedShape, drawingModel, selectedIndex);
+		update.execute();
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+		undoStack.push(update);
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
 		drawingFrame.repaint();
 	}
 	
@@ -288,13 +328,23 @@ public class DrawingController {
 			return;
 		}
 		if(JOptionPane.showConfirmDialog(drawingFrame, "Are you sure?") != 0) return;
-		for(int i = 0; i < selectedShapes.size(); i++) {
-			drawingModel.getShapes().remove(selectedShapes.get(i));
+		count = selectedShapes.size();
+		for(int i = 0; i < count; i++) {		
+			RemoveShapeCommand remove = new RemoveShapeCommand(selectedShapes.get(selectedShapes.size() - 1), drawingModel, selectedShapes);
+			remove.execute();
+			undoSize = undoStack.size();
+			propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+			undoStack.push(remove);
 		}
+		
 		propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", this.count, 0);
-		selectedShapes.clear();
+		//selectedShapes.clear();
 		selectedShape = null;
 		this.count = 0;
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
 		drawingFrame.repaint();
 	}
 	
@@ -309,10 +359,16 @@ public class DrawingController {
 			return;
 		}
 		
-		for(int i = selectedIndex; i > 0; i--) {
-			Collections.swap(drawingModel.getShapes(), i, i - 1);
-		}
+		BringToBackCommand btb = new BringToBackCommand(drawingModel, selectedIndex);
+		btb.execute();
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+		undoStack.push(btb);
 		selectedIndex=0;
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
 		drawingFrame.repaint();
 	}
 
@@ -327,8 +383,16 @@ public class DrawingController {
 			return;
 		}
 		
-		Collections.swap(drawingModel.getShapes(), selectedIndex, selectedIndex - 1);
+		ToBackCommand tb = new ToBackCommand(drawingModel, selectedIndex);
+		tb.execute();
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+		undoStack.push(tb);
 		selectedIndex--;
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
 		drawingFrame.repaint();
 	}
 
@@ -343,10 +407,17 @@ public class DrawingController {
 			return;
 		}
 		
-		for(int i = selectedIndex; i < drawingModel.getShapes().size() - 1; i++) {
-			Collections.swap(drawingModel.getShapes(), i, i + 1);
-		}
+		BringToFrontCommand btf = new BringToFrontCommand(drawingModel, selectedIndex);
+		btf.execute();
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+		undoStack.push(btf);
+		
 		selectedIndex = drawingModel.getShapes().size() - 1;
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
 		drawingFrame.repaint();
 	}
 
@@ -361,8 +432,76 @@ public class DrawingController {
 			return;
 		}
 		
-		Collections.swap(drawingModel.getShapes(), selectedIndex, selectedIndex + 1);
+		ToFrontCommand tf = new ToFrontCommand(drawingModel, selectedIndex);
+		tf.execute();
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+		undoStack.push(tf);
 		selectedIndex++;
+		if(redoStack.size() != 0) {
+			propertyChangeSupport.firePropertyChange("redoEnabled", redoStack.size(), 0);
+			redoStack.clear();
+		}	
+		drawingFrame.repaint();
+	}
+	
+	public void Undo() {
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize - 1);
+		Command cmd = undoStack.pop();
+		if(cmd instanceof SelectShapeCommand) {
+			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size(), selectedShapes.size() - 1);
+			if (selectedShapes.size() != 1)selectedShape = selectedShapes.get(selectedShapes.size()-2);
+			else selectedShape = null;
+			selectedIndex--;
+		}
+
+		cmd.unexecute();
+		
+		if(cmd instanceof UnSelectShapeCommand) {
+			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size()-1, selectedShapes.size());
+			selectedShape = selectedShapes.get(selectedShapes.size()-1);
+			selectedIndex++;
+		}
+		
+		if(cmd instanceof RemoveShapeCommand) {
+			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size() - 1, selectedShapes.size());
+			selectedShape = selectedShapes.get(selectedShapes.size()-1);
+			selectedIndex++;
+					
+		}
+		redoSize = redoStack.size();
+		propertyChangeSupport.firePropertyChange("redoEnabled", redoSize, redoSize + 1);
+		redoStack.push(cmd);
+		drawingFrame.repaint();
+	}
+
+	public void Redo() {
+		redoSize = redoStack.size();
+		propertyChangeSupport.firePropertyChange("redoEnabled", redoSize, redoSize - 1);
+		Command cmd = redoStack.pop();	
+
+		if(cmd instanceof UnSelectShapeCommand) {
+			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size(), selectedShapes.size() - 1);
+			if (selectedShapes.size() != 1)selectedShape = selectedShapes.get(selectedShapes.size()-2);
+			else selectedShape = null;
+			selectedIndex--;
+		}
+		cmd.execute();
+		if(cmd instanceof SelectShapeCommand) {
+			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size()-1, selectedShapes.size());
+			selectedShape = selectedShapes.get(selectedShapes.size()-1);
+			selectedIndex++;
+		}
+		if(cmd instanceof RemoveShapeCommand) {
+			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size() + 1, selectedShapes.size());
+			selectedShape = selectedShapes.get(selectedShapes.size()-1);
+			selectedIndex--;
+					
+		}
+		undoSize = undoStack.size();
+		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
+		undoStack.push(cmd);
 		drawingFrame.repaint();
 	}
 	
@@ -372,5 +511,5 @@ public class DrawingController {
 
 	public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
 		propertyChangeSupport.removePropertyChangeListener(propertyChangeListener);
-	}
+	}	
 }
