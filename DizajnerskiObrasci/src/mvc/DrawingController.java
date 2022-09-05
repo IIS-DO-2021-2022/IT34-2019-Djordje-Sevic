@@ -22,12 +22,18 @@ import geometry.Point;
 import geometry.Rectangle;
 import geometry.Shape;
 import geometry.SurfaceShape;
+import strategy.SaveDraw;
+import strategy.SaveLog;
+import strategy.SavingManager;
 import adapter.HexagonAdapter;
 import command.*;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.awt.Color;
 
 public class DrawingController {
@@ -46,6 +52,8 @@ public class DrawingController {
 	private Stack<Command> undoStack = new Stack<Command>();
 	private int undoSize = 0;
 	private int redoSize = 0;
+	private SavingManager savingManagerDraw = new SavingManager(new SaveDraw());
+	private SavingManager savingManagerLog = new SavingManager(new SaveLog());
 	
 	public DrawingController(DrawingModel drawingModel, DrawingFrame drawingFrame) {
 		this.drawingModel = drawingModel;
@@ -372,7 +380,7 @@ public class DrawingController {
 		drawingFrame.repaint();
 	}
 
-	public void ToBack() {
+	public void toBack() {
 		if(selectedShape == null) {
 			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -396,7 +404,7 @@ public class DrawingController {
 		drawingFrame.repaint();
 	}
 
-	public void BringToFront() {
+	public void bringToFront() {
 		if(selectedShape == null) {
 			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -421,7 +429,7 @@ public class DrawingController {
 		drawingFrame.repaint();
 	}
 
-	public void ToFront() {
+	public void toFront() {
 		if(selectedShape == null) {
 			JOptionPane.showMessageDialog(drawingFrame, "You didn't select shape!", "Warrning", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -445,7 +453,7 @@ public class DrawingController {
 		drawingFrame.repaint();
 	}
 	
-	public void Undo() {
+	public void undo() {
 		undoSize = undoStack.size();
 		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize - 1);
 		Command cmd = undoStack.pop();
@@ -476,7 +484,7 @@ public class DrawingController {
 		drawingFrame.repaint();
 	}
 
-	public void Redo() {
+	public void redo() {
 		redoSize = redoStack.size();
 		propertyChangeSupport.firePropertyChange("redoEnabled", redoSize, redoSize - 1);
 		Command cmd = redoStack.pop();	
@@ -511,5 +519,35 @@ public class DrawingController {
 
 	public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
 		propertyChangeSupport.removePropertyChangeListener(propertyChangeListener);
+	}
+
+	public void saveDraw(File selectedFile) {
+		savingManagerDraw.save(drawingModel.getShapes(), selectedFile);		
+	}
+	public void openDraw(File selectedFile) {
+		List<Shape> loadedShapes = null;
+		try {
+	         FileInputStream fileIn = new FileInputStream(selectedFile);
+	         ObjectInputStream in = new ObjectInputStream(fileIn);
+	         loadedShapes = (ArrayList<Shape>) in.readObject();
+	         in.close();
+	         fileIn.close();
+	         drawingModel.clear();
+	         Iterator<Shape> iterator = loadedShapes.iterator();
+	         while(iterator.hasNext()) {
+	        	 drawingModel.add(iterator.next());
+	         }
+	         drawingFrame.repaint();
+	      } catch (IOException i) {
+	         i.printStackTrace();
+	         return;
+	      } catch (ClassNotFoundException c) {
+	         c.printStackTrace();
+	         return;
+	      }
+	}
+	public void saveLog() {
+		// TODO Auto-generated method stub
+		
 	}	
 }

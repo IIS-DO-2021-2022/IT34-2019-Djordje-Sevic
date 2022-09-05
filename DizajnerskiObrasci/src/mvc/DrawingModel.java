@@ -1,11 +1,12 @@
 package mvc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import geometry.Shape;
 
 import geometry.Point;
 
-public class DrawingModel {
+public class DrawingModel implements Serializable{
 	private ArrayList<Shape> shapes = new ArrayList<Shape>();
 	
 	public void add(Shape p) {
@@ -22,5 +23,9 @@ public class DrawingModel {
 
 	public ArrayList<Shape> getShapes() {
 		return shapes;
+	}
+	
+	public void clear() {
+		shapes.clear();
 	}
 }

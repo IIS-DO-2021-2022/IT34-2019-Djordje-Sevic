@@ -1,6 +1,7 @@
 package adapter;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import geometry.Point;
 import geometry.Shape;
@@ -8,7 +9,7 @@ import geometry.SurfaceShape;
 import hexagon.Hexagon;
 import java.awt.Color;
 
-public class HexagonAdapter extends SurfaceShape {
+public class HexagonAdapter extends SurfaceShape{
 	private Hexagon hexagon;
 	private Point center;
 	

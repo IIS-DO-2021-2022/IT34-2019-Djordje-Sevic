@@ -1,8 +1,9 @@
 package geometry;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public abstract class Shape implements Comparable, Moveable, Cloneable{
+public abstract class Shape implements Comparable, Moveable, Cloneable, Serializable{
 	private boolean selected;
 	private Color color;
 	
