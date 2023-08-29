@@ -14,7 +14,7 @@ public class HexagonAdapter extends SurfaceShape{
 	private Point center;
 	
 	public HexagonAdapter() {
-		
+
 	}
 	
 	public HexagonAdapter(Point center, int radius) {
@@ -116,16 +116,16 @@ public class HexagonAdapter extends SurfaceShape{
 	
 	@Override
 	public String toString() {
-		return "Center=" + this.center + ", radius=" + this.hexagon.getR();
+		return "Hexagon: center: " + this.getCenter().getX() + " " + this.getCenter().getY() + " radius: " + this.getRadius()
+				+ " area_color: " + this.getInnerColor().getRGB() + " line_color: "
+				+ this.getColor().getRGB();
 	}
-
+	
 	@Override
 	public HexagonAdapter clone() {
-		HexagonAdapter hex = new HexagonAdapter();
-		hex.center = this.center.clone();
+		HexagonAdapter hex = new HexagonAdapter(this.center.clone(), this.hexagon.getR());
 		hex.hexagon.setX(this.hexagon.getX());
 		hex.hexagon.setY(this.hexagon.getY());
-		hex.hexagon.setR(this.hexagon.getR());
 		hex.setColor(this.getColor());
 		hex.setInnerColor(this.getInnerColor());
 		hex.setSelected(this.isSelected());

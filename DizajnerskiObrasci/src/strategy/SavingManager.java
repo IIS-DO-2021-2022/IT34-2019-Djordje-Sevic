@@ -12,8 +12,8 @@ public class SavingManager implements Saving{
 		this.saving = saving;
 	}
 	@Override
-	public void save(List<Shape> shapes, File file) {
-		saving.save(shapes, file);		
+	public void save(File file) {
+		saving.save(file);		
 	}
 
 }

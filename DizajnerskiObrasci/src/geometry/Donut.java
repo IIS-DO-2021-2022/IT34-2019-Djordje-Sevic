@@ -1,9 +1,12 @@
 package geometry;
 
+import geometry.Circle;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.*;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+
 
 public class Donut extends Circle{
 	private int innerRadius;
@@ -91,15 +94,14 @@ public class Donut extends Circle{
 		this.innerRadius = innerRadius;
 	}
 	
+	@Override
 	public String toString() {
-		return super.toString() + ", inner radius=" + innerRadius;
+		return "Donut: " + super.toString() + " inner_radius: " + getInnerRadius();
 	}
 	
 	@Override
 	public Donut clone() {
-		Circle d = super.clone();
-		((Donut)d).circle = this.circle;
-		((Donut)d).innerRadius = this.innerRadius;
-		return (Donut)d;
+		Donut d = new Donut(this.getCenter().clone(), this.getRadius(), this.innerRadius, this.isSelected(), this.getColor(), this.getInnerColor());		
+		return d;
 	}
 }

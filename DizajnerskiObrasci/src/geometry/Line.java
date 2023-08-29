@@ -90,7 +90,8 @@ public class Line extends Shape {
 	
 	@Override
 	public String toString() {
-		return startPoint + "-->" + endPoint;
+		return "Line: "  + "start_point: " + getStartPoint().getX() +" "+  getStartPoint().getY() + " " + "end_point: " +
+	+ getEndPoint().getX() + " " + getEndPoint().getY() +" color: " + getColor().getRGB();
 	}
 
 	@Override

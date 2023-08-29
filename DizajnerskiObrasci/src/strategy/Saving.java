@@ -6,5 +6,5 @@ import java.util.List;
 import geometry.Shape;
 
 public interface Saving {
-	void save(List<Shape> shapes, File file);
+	void save(File file);
 }

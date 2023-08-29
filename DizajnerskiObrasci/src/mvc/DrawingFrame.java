@@ -8,6 +8,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -25,6 +26,8 @@ import java.io.File;
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 public class DrawingFrame extends JFrame implements PropertyChangeListener {
 	
@@ -58,6 +61,10 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 	private JButton btnSaveLog = new JButton("Save Log");
 	private JFileChooser fc = new JFileChooser();
 	private JButton btnOpenDraw = new JButton("Open Draw");
+	private JButton btnOpenLog = new JButton("Open Log");
+	private JButton btnNextLogCommand = new JButton("Next line");
+	private JTextArea txtAreaLogger = new JTextArea();
+	private JScrollPane scrollPaneLogger = new JScrollPane(txtAreaLogger);
 	
 	public DrawingFrame() {		
 		
@@ -144,14 +151,29 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 			}
 		});
 		
-		btnSaveLog.addActionListener(new ActionListener() {
+		btnOpenLog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				drawingController.saveLog();
+				int returnVal = fc.showOpenDialog(drawingView);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					drawingController.openLog(fc.getSelectedFile());
+				}
+				
 			}
 		});
 		
+		btnSaveLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int returnVal = fc.showSaveDialog(drawingView);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					drawingController.saveLog(fc.getSelectedFile());
+				}
+			}
+		});
+		
+		
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(0, 0, 1200, 800);
+		setBounds(0, 0, 1200, 820);
 		setResizable(false);
 		setTitle("IT 34-2019 Sevic Djordje");
 		contentPane = new JPanel();
@@ -195,35 +217,45 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 		lblInnerColor.setForeground(Color.WHITE);
 		
 		
+		txtAreaLogger.setEditable(false);		
+		
+		btnNextLogCommand.setEnabled(false);	
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnSaveLog, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnOpenDraw, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(btnUndo, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnRedo, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE))
-								.addComponent(btnSaveDraw, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-								.addComponent(lblInnerColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnOpenLog, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(btnNextLogCommand, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(btnUndo, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addComponent(btnRedo, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE))
+										.addComponent(btnSaveDraw, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+										.addComponent(lblInnerColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(lblBorderColor, GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))))
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addComponent(btnBorderColor, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnInnerColor, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)))
-						.addComponent(btnSaveLog, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnOpenDraw, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(btnInnerColor, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))))
+					.addGap(26)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
+						.addComponent(tglbtnDonut, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+						.addComponent(tglbtnCircle, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+						.addComponent(tglbtnRectangle, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+						.addComponent(tglbtnLine, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+						.addComponent(tglbtnPoint, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -241,8 +273,9 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 							.addComponent(tglbtnHexagon, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addComponent(btnToFront, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-					.addGap(372))
-				.addComponent(drawingView, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1174, Short.MAX_VALUE)
+					.addGap(356))
+				.addComponent(drawingView, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1176, Short.MAX_VALUE)
+				.addComponent(scrollPaneLogger, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1176, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -284,10 +317,13 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(tglbtnDonut)
-						.addComponent(btnDelete))
+						.addComponent(btnDelete)
+						.addComponent(btnOpenLog)
+						.addComponent(btnNextLogCommand))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(drawingView, GroupLayout.PREFERRED_SIZE, 596, GroupLayout.PREFERRED_SIZE)
-					.addGap(22))
+					.addComponent(drawingView, GroupLayout.PREFERRED_SIZE, 446, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneLogger, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE))
 		);
 		contentPane.setLayout(gl_contentPane);
 		setVisible(true);
@@ -367,6 +403,19 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 	public JToggleButton getTglbtnHexagon() {
 		return tglbtnHexagon;
 	}
+	
+	public JButton getBtnNextLine() {
+		return btnNextLogCommand;
+	}
+	
+	public JButton getBtnUndo() {
+		return btnUndo;
+	}
+	
+	public JButton getBtnRedo() {
+		return btnRedo;
+	}
+
 
 	public Color getColor() {
 		return color;
@@ -382,5 +431,9 @@ public class DrawingFrame extends JFrame implements PropertyChangeListener {
 
 	public void setInnerColor(Color innerColor) {
 		this.innerColor = innerColor;
+	}
+	
+	public JTextArea getTxtAreaLogger() {
+		return txtAreaLogger;
 	}
 }

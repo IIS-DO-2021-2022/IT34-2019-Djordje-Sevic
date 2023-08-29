@@ -103,9 +103,10 @@ public class Rectangle extends SurfaceShape{
 		this.heigth = heigth;
 	}
 	
-	@Override
 	public String toString() {
-		return "Upper Left Point=" + upperLeftPoint + ", width=" + width + ", height=" + heigth;
+		return "Rectangle: Upper_left_point " + getUpperLeftPoint().getX() + " "+ getUpperLeftPoint().getY() +
+				 " height: " + this.getHeigth() + " width: " + getWidth()+ " inner_color: " + getInnerColor().getRGB()
+				 +" outer_color: " + getColor().getRGB();
 	}
 
 	@Override

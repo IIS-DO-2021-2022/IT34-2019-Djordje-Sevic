@@ -3,6 +3,7 @@ package command;
 import java.util.List;
 
 import geometry.Shape;
+import mvc.DrawingModel;
 
 public class SelectShapeCommand implements Command {
 	private Shape shape;

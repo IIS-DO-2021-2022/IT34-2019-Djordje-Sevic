@@ -1,4 +1,4 @@
-package geometry;
+ package geometry;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -95,8 +95,9 @@ public class Circle extends SurfaceShape {
 		this.radius = radius;
 	}
 	
+	@Override
 	public String toString() {
-		return "Center=" + center + ", radius=" + radius;
+		return "Circle:" + " center: "+ getCenter().getX() + " " + getCenter().getY()+" radius: "+getRadius()+" color: "+getColor().getRGB() +" inner_color: "+getInnerColor().getRGB();
 	}
 
 	@Override
