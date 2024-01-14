@@ -520,7 +520,9 @@ public class DrawingController {
 		redoSize = redoStack.size();
 		propertyChangeSupport.firePropertyChange("redoEnabled", redoSize, redoSize + 1);
 		redoStack.push(cmd);
-		drawingFrame.getTxtAreaLogger().append("Undo \n");
+		//(!(cmd instanceof SelectShapeCommand || cmd instanceof UnSelectShapeCommand)) {
+			drawingFrame.getTxtAreaLogger().append("Undo \n");
+		//}	
 		drawingFrame.repaint();
 	}
 
@@ -551,7 +553,9 @@ public class DrawingController {
 		undoSize = undoStack.size();
 		propertyChangeSupport.firePropertyChange("undoEnabled", undoSize, undoSize + 1);
 		undoStack.push(cmd);
-		drawingFrame.getTxtAreaLogger().append("Redo \n");
+		//if(!(cmd instanceof SelectShapeCommand || cmd instanceof UnSelectShapeCommand)) {
+			drawingFrame.getTxtAreaLogger().append("Redo \n");
+		//}
 		drawingFrame.repaint();
 	}
 	
@@ -653,10 +657,9 @@ public class DrawingController {
 	}
 
 	public void readNextLine(String nextLine) {
-
 		String[] s = nextLine.split(" ");
 		Command cmd;
-
+		System.out.println("RedoStack: " + redoStack + " UndoStack: " + undoStack + " Shapes" + drawingModel.getShapes());
 		if (s[0].equals("Add:")) {
 
 			Shape addShape = returnShape(nextLine);
@@ -665,8 +668,8 @@ public class DrawingController {
 				drawingFrame.getTxtAreaLogger().append("Add: " + addShape.toString() + "\n");
 				cmd = new AddShapeCommand((Shape) addShape, drawingModel);
 				cmd.execute();
-				redoStack.push(cmd);
-				redoSize++;
+				undoStack.push(cmd);
+				undoSize++;
 			}
 
 			if (!redoStack.isEmpty()) {
@@ -699,7 +702,7 @@ public class DrawingController {
 			drawingFrame.getTxtAreaLogger().append("Modify: " + shape.toString() + "\n");
 			cmd = new UpdateShapeCommand(oldShape, shape, drawingModel, selectedIndex);
 			cmd.execute();
-			redoStack.push(cmd);
+			undoStack.push(cmd);
 
 			clearRedo();
 			oldShape.setSelected(true);
@@ -721,17 +724,22 @@ public class DrawingController {
 							&& h1.getInnerColor().equals(h2.getInnerColor())
 							&& h1.getColor().equals(h2.getColor())) {
 						shape = drawingModel.getShapes().get(i);
+						selectedIndex = i;
 					}
 				}
 
 				else if ((drawingModel.getShapes().get(i)).equals(shape)) {
 					shape = drawingModel.getShapes().get(i);
-
+					selectedIndex = i;
 				}
 			}
-
-			shape.setSelected(true);
-			selectedShapes.add(shape);
+			
+			cmd = new SelectShapeCommand(shape, selectedShapes);
+			cmd.execute();
+			undoStack.push(cmd);
+			//shape.setSelected(true);
+			//selectedShapes.add(shape);
+			selectedShape = shape;
 			drawingFrame.getTxtAreaLogger().append("Select: " + shape.toString() + "\n");
 			clearRedo();
 			drawingFrame.getDrawingView().repaint();
@@ -741,7 +749,7 @@ public class DrawingController {
 			Shape shape = returnShape(nextLine);
 
 			for (int i = 0; i < drawingModel.getShapes().size(); i++) {
-
+				
 				if (drawingModel.getShapes().get(i) instanceof HexagonAdapter && shape instanceof HexagonAdapter) {
 					HexagonAdapter h1 = (HexagonAdapter) drawingModel.getShapes().get(i);
 					HexagonAdapter h2 = (HexagonAdapter) shape;
@@ -753,22 +761,31 @@ public class DrawingController {
 							&& h1.getColor().equals(h2.getColor()))
 						{
 						shape = drawingModel.getShapes().get(i);
+						
 					}
 				}
 
 				if (shape.equals(drawingModel.getShapes().get(i)))
 					shape = drawingModel.getShapes().get(i);
 			}
-
-			shape.setSelected(false);
-			selectedShapes.remove(shape);
+			
+			cmd = new UnSelectShapeCommand(shape, selectedShapes);
+			cmd.execute();
+			undoStack.push(cmd);
+			//shape.setSelected(false);
+			//selectedShapes.remove(shape);
 			drawingFrame.getTxtAreaLogger().append("Deselect: " + shape.toString() + "\n");
 			clearRedo();
 			drawingFrame.getDrawingView().repaint();
+			if(selectedShapes.size() == 0) {
+				selectedShape = null;
+			} else {
+				selectedShape = selectedShapes.get(selectedShapes.size() - 1);
+			}
 
-		} else if (s[0].equals("UNDO")) {
+		} else if (s[0].equals("Undo") && undoStack.size() > 0) {
 			undo();
-		} else if (s[0].equals("REDO")) {
+		} else if (s[0].equals("Redo") && redoStack.size() > 0) {
 			redo();
 		} else if (s[0].equals("ToBack:")) {
 			toBack();
@@ -783,7 +800,6 @@ public class DrawingController {
 	}
 
 	public Shape returnShape(String nl) {
-
 		Shape shape = null;
 
 		String[] s = nl.split(" ");
@@ -827,7 +843,7 @@ public class DrawingController {
 	}
 	
 	private void clearRedo() {
-		undoStack.clear();
+		redoStack.clear();
 		drawingFrame.getBtnRedo().setEnabled(false);
 	}
 }
