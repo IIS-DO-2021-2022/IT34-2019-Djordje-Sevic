@@ -498,7 +498,7 @@ public class DrawingController {
 		Command cmd = undoStack.pop();
 		if(cmd instanceof SelectShapeCommand) {
 			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size(), selectedShapes.size() - 1);
-			if (selectedShapes.size() != 1)selectedShape = selectedShapes.get(selectedShapes.size()-2);
+			if (selectedShapes.size() > 1)selectedShape = selectedShapes.get(selectedShapes.size()-2);
 			else selectedShape = null;
 			selectedIndex--;
 		}
@@ -533,7 +533,7 @@ public class DrawingController {
 
 		if(cmd instanceof UnSelectShapeCommand) {
 			propertyChangeSupport.firePropertyChange("numberOfSelectedShapes", selectedShapes.size(), selectedShapes.size() - 1);
-			if (selectedShapes.size() != 1)selectedShape = selectedShapes.get(selectedShapes.size()-2);
+			if (selectedShapes.size() > 1)selectedShape = selectedShapes.get(selectedShapes.size()-2);
 			else selectedShape = null;
 			selectedIndex--;
 		}

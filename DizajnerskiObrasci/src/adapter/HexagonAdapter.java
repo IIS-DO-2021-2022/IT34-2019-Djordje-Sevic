@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.io.Serializable;
 
 import geometry.Point;
+import geometry.Rectangle;
 import geometry.Shape;
 import geometry.SurfaceShape;
 import hexagon.Hexagon;
@@ -41,6 +42,13 @@ public class HexagonAdapter extends SurfaceShape{
 	public int compareTo(Object o) {
 		if(o instanceof HexagonAdapter) return this.hexagon.getR() - ((HexagonAdapter) o).hexagon.getR();
 		return 0;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof HexagonAdapter) {
+			HexagonAdapter pomocni = (HexagonAdapter) obj;
+			return this.center.equals(pomocni.center) && this.getRadius() == pomocni.getRadius();
+		} else return false;
 	}
 
 	@Override
