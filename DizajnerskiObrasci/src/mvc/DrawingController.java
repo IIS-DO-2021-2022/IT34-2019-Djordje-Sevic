@@ -659,7 +659,6 @@ public class DrawingController {
 	public void readNextLine(String nextLine) {
 		String[] s = nextLine.split(" ");
 		Command cmd;
-		System.out.println("RedoStack: " + redoStack + " UndoStack: " + undoStack + " Shapes" + drawingModel.getShapes());
 		if (s[0].equals("Add:")) {
 
 			Shape addShape = returnShape(nextLine);
@@ -719,7 +718,7 @@ public class DrawingController {
 					HexagonAdapter h2 = (HexagonAdapter) shape;
 
 					if (h1.getCenter().getX() == h2.getCenter().getX()
-							&& h1.getCenter().getY() == h2.getCenter().getX()
+							&& h1.getCenter().getY() == h2.getCenter().getY()
 							&& h1.getRadius() == h2.getRadius()
 							&& h1.getInnerColor().equals(h2.getInnerColor())
 							&& h1.getColor().equals(h2.getColor())) {
